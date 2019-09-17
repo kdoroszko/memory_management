@@ -25,10 +25,10 @@ public:
 class EmptyListError : public runtime_error
 {
 public:
-    EmptyListError(const char* what_arg);
+    EmptyListError(const std::string& what_arg);
 };
 
-EmptyListError::EmptyListError(const char* what_arg) : runtime_error(what_arg){}
+EmptyListError::EmptyListError(const std::string& what_arg) : runtime_error(what_arg){}
 
 class List
 {
