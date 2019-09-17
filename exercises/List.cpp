@@ -26,15 +26,9 @@ class EmptyListError : public runtime_error
 {
 public:
     EmptyListError(const char* what_arg);
-    virtual const char* what() const noexcept;
 };
 
 EmptyListError::EmptyListError(const char* what_arg) : runtime_error(what_arg){}
-
-const char* EmptyListError::what() const noexcept
-{
-    return runtime_error::what();
-}
 
 class List
 {
