@@ -49,6 +49,8 @@ private:
     shared_ptr<Node> first;
     shared_ptr<Node> last;
 
+    shared_ptr<Node> find_node_before(shared_ptr<Node> new_current, shared_ptr<Node> ptr);
+    shared_ptr<Node> get_reverse(const int value, shared_ptr<Node> new_current, shared_ptr<Node> new_node_for_search);
     bool it_is_not_the_last_node(shared_ptr<Node>& node);
     bool this_node_has_not_a_next(shared_ptr<Node>& node);
     bool it_is_not_the_node_from_list(shared_ptr<Node>& node);
@@ -99,6 +101,40 @@ void List::add_at_front(shared_ptr<Node> node)
         else display_error_message_cant_add_twice_same_node(node);
 }
 
+shared_ptr<Node> List::find_node_before(shared_ptr<Node> new_current, shared_ptr<Node> ptr)
+{
+    if(new_current == ptr->next)
+        return ptr;
+
+    ptr = ptr->next;
+
+    return find_node_before(new_current, ptr);
+}
+
+shared_ptr<Node> List::get_reverse(const int value, shared_ptr<Node> new_current, shared_ptr<Node> new_node_for_search)
+{
+    if(new_current->value == value)
+    {
+        cout << "Found value " << new_current->value << '\n';
+        return new_current;
+    }
+    else
+    {
+        cout << "Going through " << new_current->value << '\n';
+
+        if(new_current == first)
+        {
+            cout << "Not found: value " << value << '\n';
+            return nullptr;
+        }
+        else
+        {
+            new_current = find_node_before(new_current, new_node_for_search);
+            return get_reverse(value, new_current, new_node_for_search);
+        }
+    }
+}
+
 //Node* List::get(const int value)
 shared_ptr<Node> List::get(const int value)
 {
@@ -139,39 +175,9 @@ shared_ptr<Node> List::get_reverse(const int value)
     else
     {
         auto current = last;
-        do
-        {
-            if(current->value == value)
-            {
-                cout << "Found value " << current->value << '\n';
-                return current;
-            }
-            else
-            {
-                cout << "Going through " << current->value << '\n';
+        auto node_for_search = first;
 
-                auto node_for_search = first;
-                while(current != node_for_search)
-                {
-                    if(node_for_search->next == current)
-                        current = node_for_search;
-                    else node_for_search = node_for_search->next;
-                }
-
-                if(current == first)
-                {
-                    if(current->value == value)
-                    {
-                        cout << "Found value " << current->value << '\n';
-                        return current;
-                    }
-                    else
-                        cout << "Going through " << current->value << '\n';
-                }
-            }
-        } while(current != first);
-        cout << "Not found: value " << value << '\n';
-        return nullptr;
+        return get_reverse(value, current, node_for_search);
     }
 }
 
