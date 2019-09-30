@@ -36,6 +36,7 @@ public:
     List();
     //void add(Node* node);
     void add(shared_ptr<Node> node);
+    void add_unique(unique_ptr<Node> node);
     void add_at_front(shared_ptr<Node> node);
     //Node* get(const int value);
     shared_ptr<Node> get(const int value);
@@ -82,6 +83,29 @@ void List::add(/*Node**/ shared_ptr<Node> node)
             last = node;
         }
         else display_error_message_cant_add_twice_same_node(node);
+}
+
+void List::add_unique(unique_ptr<Node> node)
+{
+    shared_ptr<Node> shared = move(node);
+
+    if(!first)
+    {
+        first = shared;
+        last = shared;
+    }
+    else
+    {
+        auto current = first;
+
+        while(current->next)
+        {
+            current = current->next;
+        }
+
+        current->next = shared;
+        last = shared;
+    }
 }
 
 void List::add_at_front(shared_ptr<Node> node)
@@ -236,6 +260,14 @@ int main()
 
         auto node = lista.get(1);
         node = lista.get_reverse(1);
+
+        lista.clear();
+        auto test_node = make_unique<Node>(2);
+        //lista.add_unique(test_node);
+        lista.add_unique(make_unique<Node>(3));
+        lista.add_unique(make_unique<Node>(2));
+        lista.add_unique(make_unique<Node>(1));
+        lista.get(1);
 
         lista.clear();
         node = lista.get(1);
