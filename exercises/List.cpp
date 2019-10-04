@@ -35,9 +35,8 @@ class List
 public:
     List();
     //void add(Node* node);
-    void add(shared_ptr<Node> node);
-    void add_unique(unique_ptr<Node> node);
-    void add_at_front(shared_ptr<Node> node);
+    void add(unique_ptr<Node> node);
+    void add_at_front(unique_ptr<Node> node);
     //Node* get(const int value);
     shared_ptr<Node> get(const int value);
     shared_ptr<Node> get_reverse(const int value);
@@ -61,30 +60,7 @@ List::List() :
     first(nullptr), last(nullptr)
 {}
 
-void List::add(/*Node**/ shared_ptr<Node> node)
-{
-    if(!first)
-    {
-        first = node;
-        last = node;
-    }
-    else if(it_is_not_the_node_from_list(node))
-        {
-            //Node* current = first;
-            auto current = first;
-
-            while(current->next)
-            {
-                current = current->next;
-            }
-
-            current->next = node;
-            last = node;
-        }
-        else display_error_message_cant_add_twice_same_node(node);
-}
-
-void List::add_unique(unique_ptr<Node> node)
+void List::add(/*Node**/ unique_ptr<Node> node)
 {
     shared_ptr<Node> shared = move(node);
 
@@ -107,21 +83,24 @@ void List::add_unique(unique_ptr<Node> node)
     }
 }
 
-void List::add_at_front(shared_ptr<Node> node)
+void List::add_at_front(unique_ptr<Node> node)
 {
+    shared_ptr<Node> shared = move(node);
+
     if(!first)
     {
-        first = node;
-        last = node;
+        first = shared;
+        last = shared;
     }
-    else if(it_is_not_the_node_from_list(node))
-        {
-            auto temporary_ptr_to_node(first);
+    else
+    {
+        auto temporary_ptr_to_node(first);
+        shared_ptr<Node> second = make_shared<Node>(*first);
             
-            first = node;
-            node->next = temporary_ptr_to_node;
-        }
-        else display_error_message_cant_add_twice_same_node(node);
+        first = shared;
+        //first->next = temporary_ptr_to_node;
+        first->next = second;
+    }
 }
 
 //Node* List::get(const int value)
@@ -217,33 +196,25 @@ int main()
         //Node* node7 = new Node(7);
         //auto node_error_test = lista.get(1);
 
-        auto node4 = make_shared<Node>(4);
-        auto node7 = make_shared<Node>(7);
-        auto node3 = make_shared<Node>(3);
+        auto node4 = make_unique<Node>(4);
+        auto node7 = make_unique<Node>(7);
+        auto node3 = make_unique<Node>(3);
 
-        lista.add(node4);
-        lista.add(make_shared<Node>(2));
-        lista.add(node7);
-        lista.add(make_shared<Node>(9));
-        lista.add(node3);
-        lista.add(node3);
+        lista.add(move(node4));
+        lista.add(make_unique<Node>(2));
+        lista.add(move(node7));
+        lista.add(make_unique<Node>(9));
+        lista.add(move(node3));
+        lista.add(move(node3));
 
-        auto node12 = make_shared<Node>(12);
-        lista.add_at_front(node12);
-        lista.add_at_front(node12);
-        lista.add_at_front(node7);
-        lista.add_at_front(node3);
+        auto node12 = make_unique<Node>(12);
+        lista.add_at_front(move(node12));
+        lista.add_at_front(move(node12));
+        /*lista.add_at_front(move(node7));
+        lista.add_at_front(move(node3));*/
 
         auto node = lista.get(1);
         node = lista.get_reverse(1);
-
-        lista.clear();
-        auto test_node = make_unique<Node>(2);
-        //lista.add_unique(test_node);
-        lista.add_unique(make_unique<Node>(3));
-        lista.add_unique(make_unique<Node>(2));
-        lista.add_unique(make_unique<Node>(1));
-        lista.get(1);
 
         lista.clear();
         node = lista.get(1);
